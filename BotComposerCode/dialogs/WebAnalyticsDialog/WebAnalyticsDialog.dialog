@@ -1,0 +1,211 @@
+{
+  "$kind": "Microsoft.AdaptiveDialog",
+  "$designer": {
+    "id": "sJPCWj",
+    "name": "WebAnalyticsDialog",
+    "comment": ""
+  },
+  "autoEndDialog": true,
+  "defaultResultProperty": "dialog.result",
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnBeginDialog",
+      "$designer": {
+        "name": "BeginDialog",
+        "description": "",
+        "id": "2rF7ri"
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.DeleteProperty",
+          "$designer": {
+            "id": "zmRiwO"
+          },
+          "property": "user.search_web"
+        },
+        {
+          "$kind": "Microsoft.ChoiceInput",
+          "$designer": {
+            "id": "NZA4RR"
+          },
+          "defaultLocale": "en-us",
+          "disabled": false,
+          "maxTurnCount": 3,
+          "alwaysPrompt": false,
+          "allowInterruptions": false,
+          "unrecognizedPrompt": "",
+          "invalidPrompt": "",
+          "choiceOptions": {
+            "includeNumbers": false,
+            "inlineOrMore": ", or ",
+            "inlineOr": " or ",
+            "inlineSeparator": ", "
+          },
+          "property": "user.search_web",
+          "recognizerOptions": {
+            "recognizeOrdinals": true
+          },
+          "style": "suggestedAction",
+          "choices": [
+            "Search Purchase Stats and Trends",
+            "Show Time Spent On Website By Users",
+            "Show What Countries My Visitors Are From"
+          ],
+          "prompt": "${ChoiceInput_Prompt_NZA4RR()}"
+        },
+        {
+          "$kind": "Microsoft.SendActivity",
+          "$designer": {
+            "id": "AZeRtH"
+          },
+          "activity": "${SendActivity_AZeRtH()}"
+        },
+        {
+          "$kind": "Microsoft.SwitchCondition",
+          "$designer": {
+            "id": "kNd28a"
+          },
+          "condition": "user.search_web",
+          "cases": [
+            {
+              "value": "Search Purchase Stats and Trends",
+              "actions": [
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "swq3Mt"
+                  },
+                  "resultProperty": "turn.results",
+                  "method": "GET",
+                  "url": "=user.api+\"/api/web_analytics?search_for=purchase_stats\"",
+                  "responseType": "json"
+                },
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "JoyjUI"
+                  },
+                  "activity": "${SendActivity_JoyjUI()}"
+                }
+              ]
+            },
+            {
+              "value": "Show Time Spent On Website By Users",
+              "actions": [
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "e2O5jf"
+                  },
+                  "resultProperty": "turn.results",
+                  "method": "GET",
+                  "url": "=user.api+\"/api/web_analytics?search_for=time_spent\"",
+                  "responseType": "json"
+                },
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "Jyswwr"
+                  },
+                  "activity": "${SendActivity_Jyswwr()}"
+                }
+              ]
+            },
+            {
+              "value": "Show What Countries My Visitors Are From",
+              "actions": [
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "CM7P9K"
+                  },
+                  "resultProperty": "turn.results",
+                  "method": "GET",
+                  "url": "=user.api+\"/api/web_analytics?search_for=visitor_country\"",
+                  "responseType": "json"
+                },
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "vaIUXn"
+                  },
+                  "activity": "${SendActivity_vaIUXn()}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "$kind": "Microsoft.ChoiceInput",
+          "$designer": {
+            "id": "HqFiGG"
+          },
+          "defaultLocale": "en-us",
+          "disabled": false,
+          "maxTurnCount": 3,
+          "alwaysPrompt": false,
+          "allowInterruptions": false,
+          "unrecognizedPrompt": "",
+          "invalidPrompt": "",
+          "defaultValueResponse": "",
+          "choiceOptions": {
+            "includeNumbers": true,
+            "inlineOrMore": ", or ",
+            "inlineOr": " or ",
+            "inlineSeparator": ", "
+          },
+          "style": "suggestedAction",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "property": "turn.continuetopsellers",
+          "prompt": "${ChoiceInput_Prompt_HqFiGG()}"
+        },
+        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "nkS6Li"
+          },
+          "condition": "turn.continuetopsellers == 'Yes'",
+          "actions": [
+            {
+              "$kind": "Microsoft.DeleteProperty",
+              "$designer": {
+                "id": "4yEVue"
+              },
+              "property": "user.search_web"
+            },
+            {
+              "$kind": "Microsoft.RepeatDialog",
+              "$designer": {
+                "id": "P50ip1"
+              },
+              "activityProcessed": true
+            }
+          ],
+          "elseActions": [
+            {
+              "$kind": "Microsoft.DeleteProperty",
+              "$designer": {
+                "id": "BeNVwD"
+              },
+              "property": "user.search_web"
+            },
+            {
+              "$kind": "Microsoft.ReplaceDialog",
+              "$designer": {
+                "id": "GRB21P"
+              },
+              "activityProcessed": true,
+              "dialog": "WelcomeDialog"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generator": "WebAnalyticsDialog.lg",
+  "recognizer": "WebAnalyticsDialog.lu.qna",
+  "id": "WebAnalyticsDialog"
+}

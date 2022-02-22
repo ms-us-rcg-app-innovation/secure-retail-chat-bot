@@ -1,0 +1,204 @@
+{
+  "$kind": "Microsoft.AdaptiveDialog",
+  "$designer": {
+    "id": "MtT3MP",
+    "name": "TopSellersDialog",
+    "comment": ""
+  },
+  "autoEndDialog": true,
+  "defaultResultProperty": "dialog.result",
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnBeginDialog",
+      "$designer": {
+        "name": "BeginDialog",
+        "description": "",
+        "id": "WsndEK"
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.DeleteProperty",
+          "$designer": {
+            "id": "cpDGUO"
+          },
+          "property": "user.search"
+        },
+        {
+          "$kind": "Microsoft.ChoiceInput",
+          "$designer": {
+            "id": "evtuMp"
+          },
+          "defaultLocale": "en-us",
+          "disabled": false,
+          "maxTurnCount": 3,
+          "alwaysPrompt": false,
+          "allowInterruptions": false,
+          "unrecognizedPrompt": "",
+          "invalidPrompt": "",
+          "choiceOptions": {
+            "includeNumbers": false,
+            "inlineOrMore": ", or ",
+            "inlineOr": " or ",
+            "inlineSeparator": ", "
+          },
+          "prompt": "${ChoiceInput_Prompt_evtuMp()}",
+          "property": "user.search",
+          "recognizerOptions": {
+            "recognizeOrdinals": true
+          },
+          "style": "suggestedAction",
+          "choices": [
+            "Search Top Selling Sizes",
+            "Search Top Selling Colors",
+            "Search Top Selling Item Types"
+          ]
+        },
+        {
+          "$kind": "Microsoft.SwitchCondition",
+          "$designer": {
+            "id": "wiZfhj"
+          },
+          "condition": "user.search",
+          "cases": [
+            {
+              "value": "Search Top Selling Sizes",
+              "actions": [
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "5JYnRy"
+                  },
+                  "resultProperty": "turn.results",
+                  "method": "GET",
+                  "responseType": "json",
+                  "url": "=user.api+\"/api/top_sellers?search_for=size\""
+                },
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "8lIs4c"
+                  },
+                  "activity": "${SendActivity_8lIs4c()}"
+                }
+              ]
+            },
+            {
+              "value": "Search Top Selling Colors",
+              "actions": [
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "0huZbw"
+                  },
+                  "resultProperty": "turn.results",
+                  "method": "GET",
+                  "responseType": "json",
+                  "url": "=user.api+\"/api/top_sellers?search_for=color\""
+                },
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "opBjJg"
+                  },
+                  "activity": "${SendActivity_opBjJg()}"
+                }
+              ]
+            },
+            {
+              "value": "Search Top Selling Item Types",
+              "actions": [
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "FkrGuM"
+                  },
+                  "resultProperty": "turn.results",
+                  "method": "GET",
+                  "url": "=user.api+\"/api/top_sellers?search_for=item\"",
+                  "responseType": "json"
+                },
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "ydkJJi"
+                  },
+                  "activity": "${SendActivity_ydkJJi()}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "$kind": "Microsoft.ChoiceInput",
+          "$designer": {
+            "id": "5CB05p"
+          },
+          "defaultLocale": "en-us",
+          "disabled": false,
+          "maxTurnCount": 3,
+          "alwaysPrompt": false,
+          "allowInterruptions": false,
+          "unrecognizedPrompt": "",
+          "invalidPrompt": "",
+          "defaultValueResponse": "",
+          "choiceOptions": {
+            "includeNumbers": true,
+            "inlineOrMore": ", or ",
+            "inlineOr": " or ",
+            "inlineSeparator": ", "
+          },
+          "style": "suggestedAction",
+          "choices": [
+            "Yes",
+            "No"
+          ],
+          "property": "turn.continuetopsellers",
+          "prompt": "${ChoiceInput_Prompt_5CB05p()}"
+        },
+        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "iUF01b"
+          },
+          "condition": "turn.continuetopsellers == 'Yes'",
+          "actions": [
+            {
+              "$kind": "Microsoft.DeleteProperty",
+              "$designer": {
+                "id": "HH2qgk"
+              },
+              "property": "user.search"
+            },
+            {
+              "$kind": "Microsoft.RepeatDialog",
+              "$designer": {
+                "id": "VAnP0e"
+              },
+              "activityProcessed": true
+            }
+          ],
+          "elseActions": [
+            {
+              "$kind": "Microsoft.DeleteProperty",
+              "$designer": {
+                "id": "ZKtvii"
+              },
+              "property": "user.search"
+            },
+            {
+              "$kind": "Microsoft.ReplaceDialog",
+              "$designer": {
+                "id": "KAL2XE"
+              },
+              "activityProcessed": true,
+              "dialog": "WelcomeDialog"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generator": "TopSellersDialog.lg",
+  "recognizer": "TopSellersDialog.lu.qna",
+  "id": "TopSellersDialog"
+}

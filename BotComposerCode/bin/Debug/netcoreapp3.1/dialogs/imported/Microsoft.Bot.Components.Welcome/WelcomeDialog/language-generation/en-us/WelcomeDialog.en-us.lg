@@ -1,0 +1,47 @@
+[import](common.lg)
+
+# SendActivity_WelcomeReturningUser()
+[Activity
+    Text = ${SendActivity_WelcomeReturningUser_text()}
+]
+
+# SendActivity_WelcomeReturningUser_text()
+- 🖐️ Welcome back! How can I help you today?
+- 🖐️ Hello again! What can I help with?
+- 🖐️ Good to see you again. What do you want to do today?
+- 🖐️ Hey, there! Let's get started.
+- 🖐️ Hello again! How can I help?
+
+# SendActivity_WelcomeNewUser()
+[Activity
+    Text = ${SendActivity_WelcomeNewUser_text()}
+]
+
+# SendActivity_WelcomeNewUser_text()
+- 🖐️ Hey, there! How can I help you today?
+- 🖐️ Hi! How can I help?
+- 🖐️ Hello! What do you want to do today?
+
+> Imported: ecb31044e0e5c0b54f49870e6872f158
+# SendActivity_ViGyXd()
+[Activity
+    Attachments = ${SendActivity_ViGyXd_attachment_3A2MLe()}
+]
+
+# SendActivity_ViGyXd_attachment_3A2MLe()
+[HeroCard
+    title = Microsoft Retail & Consumer Group
+    subtitle = Microsoft Bot Framework
+    text = I’m here to help you know your customer better \n\n To get started, tell me what you’d like to do. I’ve included some sample things you can ask me.
+    image = https://mspoweruser.com/wp-content/uploads/2016/05/microsoft-bot-illustration-pixabay.jpg
+    buttons = ${cardActionTemplate('imBack', 'I want to search for top sellers', 'I want to search for top sellers')} | ${cardActionTemplate('imBack', 'I want to analyze web trends', 'I want to analyze web trends')} | ${cardActionTemplate('imBack', 'Update API URL', 'Update API URL')}
+]
+
+
+# TextInput_Prompt_nCWi69()
+[Activity
+    Text = ${TextInput_Prompt_nCWi69_text()}
+]
+
+# TextInput_Prompt_nCWi69_text()
+- What is the URL for your API? Example: https://botapi-sdddd.azurewebsites.net

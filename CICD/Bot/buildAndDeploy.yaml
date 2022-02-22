@@ -1,0 +1,87 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# Starter pipeline
+# Minimal pipeline to deploy a basic assistant bot that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+#
+
+trigger:
+- master
+
+#pool: MyAgentPool1
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: BotProdVarsSecure 
+- group: ProdVarsNonSensitive
+
+stages:
+  - stage: Build
+    jobs:
+    - job: Build
+      steps:
+      # Install prerequisites
+      - template: templates/installPrerequisites.yaml
+
+      # Build LUIS and QnAMaker models
+      - template: templates/buildModels.yaml
+        parameters:
+          sourceDirectory: "$(System.DefaultWorkingDirectory)/$(botProjectDirectory)"
+          botName: "$(botName)"
+          environmentName: "$(environmentName)"
+
+      # build web app
+      - template: templates/buildDotNetWebApp.yaml
+        parameters:
+          botProjectFile: "$(System.DefaultWorkingDirectory)/$(botProjectDirectory)/$(botProjectName).csproj"
+          environmentName: "$(environmentName)"
+          sourceDirectory: "$(System.DefaultWorkingDirectory)/$(botProjectDirectory)"
+
+  - stage: DeployProd
+    variables:
+    - group: BotProdVarsSecure
+    - group: ProdVarsNonSensitive
+    jobs:
+        # track deployments on the environment
+      - deployment: DeployProd
+        displayName: deploy Web App to Prod
+        #pool: MyAgentPool1
+        pool:
+          vmImage: ubuntu-latest
+        # creates an environment if it doesn't exist
+        environment: 'prod'
+        strategy:
+          # default deployment strategy, more coming...
+          runOnce:
+            deploy:
+              steps:
+              # Install prerequisites
+              - template: templates/installPrerequisites.yaml
+              # Deploy and configure web app
+              - template: templates/deploy.yaml
+                parameters:
+                  azureServiceConnection: "$(azureServiceConnection)"
+                  webAppName: "$(webAppName)"
+                  resourceGroupName: "$(resourceGroupName)"
+                  botName: "$(botName)"
+                  botProjectName: "$(botProjectName)"
+                  microsoftAppId: "$(microsoftAppId)"
+                  microsoftAppPassword: "$(microsoftAppPassword)"
+                  luisEndpoint: "$(luisEndpoint)"
+                  luisAuthoringKey: "$(luisAuthoringKey)"
+                  luisEndpointKey: "$(luisEndpointKey)"
+                  qnaSubscriptionKey: "$(qnaSubscriptionKey)"
+                  qnaEndpointKey: "$(qnaEndpointKey)"
+                  qnaHostName: "$(qnaHostName)"
+                  qnaKnowledgebaseId: "$(qnaKnowledgebaseId)"
+                  qnaRegion: "$(qnaRegion)"
+                  cosmosDBEndpoint: "$(cosmosDBEndpoint)"
+                  cosmosDbAuthKey: "$(cosmosDbAuthKey)"
+                  appInsightsConnectionString: "$(appInsightsConnectionString)"
+                  environmentName: "$(environmentName)"
+                  LuisPredictionName: "$(LuisPredictionName)"
+                  KeyVaultName: "$(KeyVaultName)"
+

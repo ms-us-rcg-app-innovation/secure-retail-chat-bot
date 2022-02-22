@@ -1,0 +1,222 @@
+[import](common.lg)
+
+# ChoiceInput_Prompt_evtuMp()
+- What Top Selling properties would you like to explore?
+# SendActivity_8lIs4c_attachment_5aHi3G()
+> To learn more Adaptive Cards format, read the documentation at
+> https://docs.microsoft.com/en-us/adaptive-cards/getting-started/bots
+- ```{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Size"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "X Large"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Large"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Medium"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Number of Items Sold"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.size['xlarge']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.size['large']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.size['medium']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.size['small']}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}```
+# SendActivity_8lIs4c()
+[Activity
+    Attachments = ${json(SendActivity_8lIs4c_attachment_5aHi3G())}
+]
+
+# SendActivity_opBjJg()
+[Activity
+    Attachments = ${json(SendActivity_opBjJg_attachment_D2tIsz())}
+]
+
+# SendActivity_opBjJg_attachment_D2tIsz()
+> To learn more Adaptive Cards format, read the documentation at
+> https://docs.microsoft.com/en-us/adaptive-cards/getting-started/bots
+- ```{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Color"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Blue"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Orange"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Green"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Number of Items Sold"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.color['blue']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.color['orange']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.color['green']}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}```
+# SendActivity_ydkJJi()
+[Activity
+    Attachments = ${json(SendActivity_ydkJJi_attachment_Dtg36s())}
+]
+
+# SendActivity_ydkJJi_attachment_Dtg36s()
+> To learn more Adaptive Cards format, read the documentation at
+> https://docs.microsoft.com/en-us/adaptive-cards/getting-started/bots
+- ```{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Item Type"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Shirt"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Jeans"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Skirt"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Long Dress"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Number of Items Sold"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.item['shirt']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.item['jeans']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.item['skirt']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.item['long dress']}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}```
+# ChoiceInput_Prompt_5CB05p_text()
+- Please 
+# ChoiceInput_Prompt_5CB05p()
+- Do you want to search top sellers with other properties?

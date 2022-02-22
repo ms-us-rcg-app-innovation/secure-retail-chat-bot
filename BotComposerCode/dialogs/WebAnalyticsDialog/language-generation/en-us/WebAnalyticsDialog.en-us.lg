@@ -1,0 +1,232 @@
+[import](common.lg)
+
+# ChoiceInput_Prompt_NZA4RR()
+[Activity
+    Text = ${ChoiceInput_Prompt_NZA4RR_text()}
+]
+
+# ChoiceInput_Prompt_NZA4RR_text()
+- What Type of Web Trends Are You Looking for?
+# SendActivity_JoyjUI_attachment_5aHi3G()
+> To learn more Adaptive Cards format, read the documentation at
+> https://docs.microsoft.com/en-us/adaptive-cards/getting-started/bots
+- ```{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Size"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Total Visitors to Website"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Total Number of Purchases"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Average Number of Items / Purchase"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Average Purchase Ammount"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Data"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.purchase_stats['total_visitors']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.purchase_stats['number_of_purchases']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.purchase_stats['average_num_of_items_per_purchase']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.purchase_stats['average_purchase_ammount']}$"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}```
+# SendActivity_JoyjUI()
+[Activity
+    Attachments = ${json(SendActivity_JoyjUI_attachment_5aHi3G())}
+]
+
+# SendActivity_Jyswwr_attachment_D2tIsz()
+> To learn more Adaptive Cards format, read the documentation at
+> https://docs.microsoft.com/en-us/adaptive-cards/getting-started/bots
+- ```{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Time Spent On Website by Visitors"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Max"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Min"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Average"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Number of Items Sold"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.time_spent['max']} ${turn.results.content.time_spent['unit']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.time_spent['min']} ${turn.results.content.time_spent['unit']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.time_spent['avg']} ${turn.results.content.time_spent['unit']}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}```
+# SendActivity_Jyswwr()
+[Activity
+    Attachments = ${json(SendActivity_Jyswwr_attachment_D2tIsz())}
+]
+
+# SendActivity_vaIUXn_attachment_Dtg36s()
+> To learn more Adaptive Cards format, read the documentation at
+> https://docs.microsoft.com/en-us/adaptive-cards/getting-started/bots
+- ```{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Visitor Country"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "USA"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Denmark"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "Finland"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "France"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "weight": "bolder",
+                            "text": "Number of Visitors"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.visitor_country['USA']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.visitor_country['DENMARK']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.visitor_country['FINLAND']}"
+                        },{
+                            "type": "TextBlock",
+                            "separator":true,
+                            "text": "${turn.results.content.visitor_country['FRANCE']}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}```
+# SendActivity_vaIUXn()
+[Activity
+    Attachments = ${json(SendActivity_vaIUXn_attachment_Dtg36s())}
+]
+
+# SendActivity_AZeRtH()
+[Activity
+    Text = ${SendActivity_AZeRtH_text()}
+]
+
+# SendActivity_AZeRtH_text()
+- ${user.search_web}
+# ChoiceInput_Prompt_HqFiGG()
+- Do you want to search web analytics with other properties?
