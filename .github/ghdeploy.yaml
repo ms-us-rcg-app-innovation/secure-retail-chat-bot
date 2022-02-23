@@ -1,0 +1,265 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# Builds, deploys and configures the bot's dotnet web app
+# 
+
+parameters:
+- name: azureServiceConnection
+  displayName: Azure Service Connection
+  type: string
+  
+- name: KeyVaultName
+  displayName: Key Vault Name
+  type: string
+  
+- name: LuisPredictionName
+  displayName: Luis Prediction Resource Name
+  type: string  
+
+- name: webAppName
+  displayName: Azure web app name
+  type: string
+
+- name: resourceGroupName
+  displayName: Resource group
+  type: string
+
+- name: botName
+  displayName: Bot name
+  type: string
+
+- name: botProjectName
+  displayName: Bot project to build and deploy
+  type: string
+
+- name: microsoftAppId
+  displayName: Bot's Microsoft app ID
+  type: string
+
+- name: microsoftAppPassword
+  displayName: Bot's Microsoft app Password
+  type: string
+
+- name: luisEndpoint
+  displayName: LUIS endpoint
+  type: string
+
+- name: luisAuthoringKey
+  displayName: LUIS authoring key
+  type: string
+
+- name: luisEndpointKey
+  displayName: LUIS endpoint key
+  type: string
+
+- name: qnaSubscriptionKey
+  displayName: QnA Maker subscription key
+  type: string
+
+- name: qnaEndpointKey
+  displayName: QnA Maker endpoint key
+  type: string
+
+- name: qnaHostName
+  displayName: QnA Maker host name
+  type: string
+
+- name: qnaKnowledgebaseId
+  displayName: QnA Maker knowledgebase ID
+  type: string
+
+- name: qnaRegion
+  displayName: QnA Maker region
+  type: string
+
+# e.g. https://examplebotcosmosdb.documents.azure.com:443
+- name: cosmosDBEndpoint
+  displayName: CosmosDB Endpoint
+  type: string
+
+- name: cosmosDbAuthKey
+  displayName: CosmosDb AuthKey
+  type: string
+
+- name: appInsightsConnectionString
+  displayName: App Insights Connection String
+  type: string
+
+- name: environmentName
+  displayName: Environment name
+  type: string
+
+steps:
+# unzip the deployment package so we can update the appsettings luis environment and deploy the LUIS models
+- task: ExtractFiles@1
+  inputs: 
+    archiveFilePatterns: "$(Pipeline.Workspace)/BuildArtifacts-$(Build.BuildId)/${{ parameters.botProjectName }}.zip"
+    destinationFolder: "$(Pipeline.Workspace)/extracted"
+    cleanDestinationFolder: true
+
+# update the luis environment to match the luis models name
+- task: PowerShell@2
+  displayName: "Update AppSettings LUIS environment"
+  inputs:
+    targetType: "inline"
+    script: |
+      $appSettingsFile = "$(Pipeline.Workspace)/extracted/settings/appsettings.json"
+      $appSettings = Get-Content $appSettingsFile | ConvertFrom-Json
+      $appSettings.luis.environment = "${{ parameters.environmentName }}"
+      ConvertTo-Json $appSettings -Depth 10 | set-content -Path $appSettingsFile
+
+ 
+# deploy the LUIS models
+- script: bf luis:build --out "$(Pipeline.Workspace)/extracted/generated" --authoringKey ${{ parameters.luisAuthoringKey }} --botName ${{ parameters.botName}} --suffix ${{ parameters.environmentName }} --force --log --luConfig "$(Pipeline.Workspace)/extracted/generated/interruption/luConfigLuis.json"
+  displayName: Publish LUIS apps
+  name: PublishLuisApps
+  workingDirectory: $(Pipeline.Workspace)/extracted
+  
+# Set Prediction Endpoint 
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: ${{ parameters.azureServiceConnection }}
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $jsonString = bf luis:application:list --endpoint="${{ parameters.luisEndpoint }}" --subscriptionKey="${{ parameters.luisAuthoringKey }}"
+      $json = $jsonString | out-string | ConvertFrom-Json
+      $appId = $json[0].id
+      $token = $(az account get-access-token --query 'accessToken' -o tsv)
+      $AzureSubscriptionId = $(az account show --query id --output tsv)
+      bf luis:application:assignazureaccount --accountName "${{ parameters.LuisPredictionName }}" --azureSubscriptionId $AzureSubscriptionId --resourceGroup "${{ parameters.resourceGroupName }}" --armToken $token --appId=$appId --subscriptionKey="${{ parameters.luisAuthoringKey }}" --endpoint="${{ parameters.luisEndpoint }}"
+  displayName: Add prediction resource to application
+
+# Secure Sensitive Env Variables
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: ${{ parameters.azureServiceConnection }}
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $MicrosoftAppId1 = $(az keyvault secret show --name "MicrosoftAppId" --vault-name ${{ parameters.KeyVaultName }} --query id --output tsv)
+      $MicrosoftAppId2 = "@Microsoft.KeyVault(SecretUri="+$MicrosoftAppId1+")"
+      echo "##vso[task.setvariable variable=MicrosoftAppId3]$MicrosoftAppId2"
+      
+      $MicrosoftAppPassword1 = $(az keyvault secret show --name "MicrosoftAppPassword" --vault-name ${{ parameters.KeyVaultName }} --query id --output tsv)
+      $MicrosoftAppPassword2 = "@Microsoft.KeyVault(SecretUri="+$MicrosoftAppPassword1+")"
+      echo "##vso[task.setvariable variable=MicrosoftAppPassword3]$MicrosoftAppPassword2"
+      
+      $LuisEndpointKey1 = $(az keyvault secret show --name "LuisEndpointKey" --vault-name ${{ parameters.KeyVaultName }} --query id --output tsv)
+      $LuisEndpointKey2 = "@Microsoft.KeyVault(SecretUri="+$LuisEndpointKey1+")"
+      echo "##vso[task.setvariable variable=LuisEndpointKey3]$LuisEndpointKey2"
+      
+      $cosmosDbAuthKey1 = $(az keyvault secret show --name "cosmosDbAuthKey" --vault-name ${{ parameters.KeyVaultName }} --query id --output tsv)
+      $cosmosDbAuthKey2 = "@Microsoft.KeyVault(SecretUri="+$cosmosDbAuthKey1+")"
+      echo "##vso[task.setvariable variable=cosmosDbAuthKey3]$cosmosDbAuthKey2"
+      
+  displayName: Secure and Set Sensitive Variables
+
+# zip up for deployment
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Pipeline.Workspace)/extracted' 
+    includeRootFolder: false
+    archiveFile: '$(Pipeline.Workspace)/BuildArtifacts-$(Build.BuildId)/${{ parameters.botProjectName }}.zip' 
+    replaceExistingArchive: true 
+
+# Deploy the web app to azure
+- task: AzureWebApp@1
+  displayName: "Deploy Azure Web App: ${{ parameters.webAppName }}"
+  inputs:
+    azureSubscription: ${{ parameters.azureServiceConnection }}
+    appName: "${{ parameters.webAppName }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    package: "$(Pipeline.Workspace)/BuildArtifacts-$(Build.BuildId)/${{ parameters.botProjectName }}.zip"
+    deploymentMethod: zipDeploy
+
+# Configure web appSettings
+- task: AzureAppServiceSettings@1
+  displayName: "Configure App Service Settings"
+  inputs:
+    azureSubscription: "${{ parameters.azureServiceConnection }}"
+    appName: "${{ parameters.webAppName }}"
+    appSettings: |
+      [
+        {
+          "name": "MicrosoftAppId",
+          "value": "$(MicrosoftAppId3)",
+          "slotSetting": false
+        },
+        {
+          "name": "MicrosoftAppPassword",
+          "value": "$(MicrosoftAppPassword3)",
+          "slotSetting": false
+        },
+        {
+          "name": "luis__endpointKey",
+          "value": "$(LuisEndpointKey3)",
+          "slotSetting": false
+        },
+        {
+          "name": "CosmosDbPartitionedStorage__authKey",
+          "value": "$(cosmosDbAuthKey3)",
+          "slotSetting": false
+        },
+        {
+          "name": "luis__endpoint",
+          "value": "${{ parameters.luisEndpoint }}",
+          "slotSetting": false
+        },
+        {
+          "name": "qna__hostname",
+          "value": "${{ parameters.qnaHostName }}",
+          "slotSetting": false
+        },
+        {
+          "name": "qna__knowledgebaseid",
+          "value": "${{ parameters.qnaKnowledgebaseId }}",
+          "slotSetting": false
+        },
+        {
+          "name": "qna__qnaRegion",
+          "value": "${{ parameters.qnaRegion }}",
+          "slotSetting": false
+        },
+        {
+          "name": "qna__endpointKey",
+          "value": "${{ parameters.qnaEndpointKey }}",
+          "slotSetting": false
+        },
+        {
+          "name": "qna__subscriptionKey",
+          "value": "${{ parameters.qnaSubscriptionKey }}",
+          "slotSetting": false
+        },
+        {
+          "name": "runtimeSettings__storage",
+          "value": "CosmosDbPartitionedStorage",
+          "slotSetting": false
+        },
+        {
+          "name": "CosmosDbPartitionedStorage__collectionId",
+          "value": "botstate-collection",
+          "slotSetting": false
+        },
+        {
+          "name": "CosmosDbPartitionedStorage__containerId",
+          "value": "botstate-container",
+          "slotSetting": false
+        },
+        {
+          "name": "CosmosDbPartitionedStorage__cosmosDBEndpoint",
+          "value": "${{ parameters.cosmosDBEndpoint }}",
+          "slotSetting": false
+        },
+        {
+          "name": "CosmosDbPartitionedStorage__databaseId",
+          "value": "botstate-db",
+          "slotSetting": false
+        },
+        {
+          "name": "runtimeSettings__telemetry__options__connectionString",
+          "value": "${{ parameters.appInsightsConnectionString }}",
+          "slotSetting": false
+        }
+      ]
