@@ -1,0 +1,67 @@
+#There is no conversion path for templates in GitHub Actions
+#There is no conversion path for templates in GitHub Actions
+#There is no conversion path for templates in GitHub Actions
+#Note: Azure DevOps strategy>runOnce does not have an equivalent in GitHub Actions yet, and only the deploy steps are transferred to steps
+#There is no conversion path for templates in GitHub Actions
+#There is no conversion path for templates in GitHub Actions
+on:
+  push:
+    branches:
+    - master
+env:
+  group: BotProdVarsSecure
+jobs:
+  Build_Stage_Build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - # There is no conversion path for templates in GitHub Actions
+      run: 'ghinstallPrerequisites.yml'
+    - # There is no conversion path for templates in GitHub Actions
+      run: |
+        ghbuildModels.yml
+        sourceDirectory: ${{ github.workspace }}/${{ env.botProjectDirectory }}
+        botName: ${{ env.botName }}
+        environmentName: ${{ env.environmentName }}
+    - # There is no conversion path for templates in GitHub Actions
+      run: |
+        ghbuildDotNetWebApp.yml
+        botProjectFile: ${{ github.workspace }}/${{ env.botProjectDirectory }}/${{ env.botProjectName }}.csproj
+        environmentName: ${{ env.environmentName }}
+        sourceDirectory: ${{ github.workspace }}/${{ env.botProjectDirectory }}
+  DeployProd_Stage_DeployProd:
+    # 'Note: Azure DevOps strategy>runOnce does not have an equivalent in GitHub Actions yet, and only the deploy steps are transferred to steps'
+    name: deploy Web App to Prod
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+    env:
+      group: BotProdVarsSecure
+    steps:
+    - # There is no conversion path for templates in GitHub Actions
+      run: 'ghinstallPrerequisites.yml'
+    - # There is no conversion path for templates in GitHub Actions
+      run: |
+        ghdeploy.yml
+        azureServiceConnection: ${{ env.azureServiceConnection }}
+        webAppName: ${{ env.webAppName }}
+        resourceGroupName: ${{ env.resourceGroupName }}
+        botName: ${{ env.botName }}
+        botProjectName: ${{ env.botProjectName }}
+        microsoftAppId: ${{ env.microsoftAppId }}
+        microsoftAppPassword: ${{ env.microsoftAppPassword }}
+        luisEndpoint: ${{ env.luisEndpoint }}
+        luisAuthoringKey: ${{ env.luisAuthoringKey }}
+        luisEndpointKey: ${{ env.luisEndpointKey }}
+        qnaSubscriptionKey: ${{ env.qnaSubscriptionKey }}
+        qnaEndpointKey: ${{ env.qnaEndpointKey }}
+        qnaHostName: ${{ env.qnaHostName }}
+        qnaKnowledgebaseId: ${{ env.qnaKnowledgebaseId }}
+        qnaRegion: ${{ env.qnaRegion }}
+        cosmosDBEndpoint: ${{ env.cosmosDBEndpoint }}
+        cosmosDbAuthKey: ${{ env.cosmosDbAuthKey }}
+        appInsightsConnectionString: ${{ env.appInsightsConnectionString }}
+        environmentName: ${{ env.environmentName }}
+        LuisPredictionName: ${{ env.LuisPredictionName }}
+        KeyVaultName: ${{ env.KeyVaultName }}
+                    
